@@ -14,7 +14,7 @@
     (is (let [input (rand-bytes n)
               a1 (encode input)
               a2 (Base64/encodeBase64 input)]
-          (= (into [] a1) (into [] a2))))))
+          (= (seq a1) (seq a2))))))
 
 (deftest offset-correctness
   (doseq [n (range 1 100)]
@@ -25,4 +25,4 @@
                 input2 (byte-array len)
                 _ (System/arraycopy input off input2 0 len)
                 a2 (Base64/encodeBase64 input2)]
-            (= (into [] a1) (into [] a2)))))))
+            (= (seq a1) (seq a2)))))))
