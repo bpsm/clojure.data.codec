@@ -13,6 +13,20 @@
     (quot 3)
     (unchecked-multiply 4)))
 
+(defn tail-len
+  ^long [^bytes encoded]
+  (condp = (char 61)
+      (aget encoded (-> encoded alength dec dec)) 1
+      (aget encoded (-> encoded alength dec)) 2
+      0))
+
+(defn dec-length
+  ^long [^long n ^long tail-len]
+  (-> n
+      (quot 4)
+      (unchecked-multiply 3)
+      (unchecked-subtract (case tail-len 0 0, 1 2, 2 1))))
+
 (defn encode!
   "Reads from the input byte array for the specified length starting at the offset
    index, and base64 encodes into the output array starting at index 0."
@@ -107,3 +121,14 @@
       (encode! input offset length dest)
       dest)))
 
+(defn decode!
+  [^bytes input ^long offset ^long length ^bytes output]
+  output)
+
+(defn decode
+  ([^bytes input]
+     (decode input 0 (alength input)))
+  ([^bytes input ^long offset ^long length]
+     (let [dest (byte-array (dec-length length (tail-len input)))]
+       (decode! input offset length dest)
+       dest)))
